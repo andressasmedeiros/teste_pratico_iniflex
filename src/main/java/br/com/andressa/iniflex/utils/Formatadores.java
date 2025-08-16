@@ -1,4 +1,4 @@
-package br.com.andressa.iniflex;
+package br.com.andressa.iniflex.utils;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
@@ -8,12 +8,14 @@ import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
 public final class Formatadores {
-    private Formatadores() {}
+    private Formatadores() {
+    }
 
-    public static final Locale PT_BR = new Locale("pt", "BR");
+    public static final Locale PT_BR = Locale.of("pt", "BR");
     private static final DateTimeFormatter DTF = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
     private static final DecimalFormat DF;
+
     static {
         var s = new DecimalFormatSymbols(PT_BR);
         s.setDecimalSeparator(',');
@@ -21,6 +23,11 @@ public final class Formatadores {
         DF = new DecimalFormat("#,##0.00", s);
     }
 
-    public static String data(LocalDate d) { return d.format(DTF); }
-    public static String numero(BigDecimal n) { return DF.format(n); }
+    public static String data(LocalDate d) {
+        return d.format(DTF);
+    }
+
+    public static String numero(BigDecimal n) {
+        return DF.format(n);
+    }
 }

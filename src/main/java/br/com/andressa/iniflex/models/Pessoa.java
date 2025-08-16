@@ -1,10 +1,10 @@
-package br.com.andressa.iniflex;
+package br.com.andressa.iniflex.models;
 
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.Objects;
 
-public sealed abstract class Pessoa permits Funcionario {
+public abstract sealed class Pessoa permits Funcionario {
     private final String nome;
     private final LocalDate dataNascimento;
 
@@ -13,8 +13,13 @@ public sealed abstract class Pessoa permits Funcionario {
         this.dataNascimento = Objects.requireNonNull(dataNascimento, "dataNascimento não pode ser nula");
     }
 
-    public String getNome() { return nome; }
-    public LocalDate getDataNascimento() { return dataNascimento; }
+    public String getNome() {
+        return nome;
+    }
+
+    public LocalDate getDataNascimento() {
+        return dataNascimento;
+    }
 
     public int getIdadeEmAnos(LocalDate referencia) {
         return Period.between(dataNascimento, referencia).getYears();

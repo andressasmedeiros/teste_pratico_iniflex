@@ -1,14 +1,25 @@
 package br.com.andressa.iniflex;
 
+import br.com.andressa.iniflex.enums.Funcao;
+import br.com.andressa.iniflex.models.Funcionario;
+import br.com.andressa.iniflex.utils.Formatadores;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.Collator;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
-import static br.com.andressa.iniflex.Funcao.*;
 
 public final class Principal {
 
@@ -20,60 +31,64 @@ public final class Principal {
 
     private static final int W_NOME = 16;
     private static final int W_DATA = 12;
-    private static final int W_SAL  = 14;
+    private static final int W_SAL = 14;
     private static final int W_FUNC = 14;
 
     private static final int W_K = 16;
     private static final int W_V = 20;
 
-    private Principal() { }
+    private Principal() {
+    }
 
     public static void main(String[] args) {
         List<Funcionario> funcionarios = new ArrayList<>(cargaInicial());
 
         removerPorNome(funcionarios, "João");
 
-        titulo("Funcionários");
-        imprimirTabela4(funcionarios);
+        imprimirTitulo("Funcionários");
+        imprimirTabelaQuatroColunas(funcionarios);
 
-        aplicarReajuste(funcionarios, new BigDecimal("0.10"));
+        BigDecimal percentual = new BigDecimal("0.10");
+        aplicarReajuste(funcionarios, percentual);
 
-        Map<Funcao, List<Funcionario>> porFuncao = agruparPorFuncao(funcionarios);
+        Map<Funcao, List<Funcionario>> agrupamentoFuncionariosPorFuncao = agruparPorFuncao(funcionarios);
 
-        titulo("Agrupados por função");
-        imprimirAgrupado(porFuncao);
+        imprimirTitulo("Agrupados por função");
+        imprimirAgrupado(agrupamentoFuncionariosPorFuncao);
 
-        titulo("Aniversariantes (Outubro e Dezembro)");
-        imprimirTabela4(aniversariantes(funcionarios, 10, 12));
+        List<Funcionario> aniversariantesPorMeses10E12 = getAniversariantesPorMeses(funcionarios, 10, 12);
+        imprimirTitulo("Aniversariantes (Outubro e Dezembro)");
+        imprimirTabelaQuatroColunas(aniversariantesPorMeses10E12);
 
-        titulo("Mais velho");
-        maisVelho(funcionarios).ifPresent(f -> {
-            imprimirTabela4(List.of(f));
-            imprimirTabela2("Idade", f.getIdadeEmAnos(LocalDate.now()) + " anos");
-        });
+        imprimirTitulo("Mais velho");
+        Optional<Funcionario> funcionarioMaisVelhoOptional = getFuncionarioMaisVelho(funcionarios);
+        funcionarioMaisVelhoOptional.ifPresent(Principal::imprimirFuncionarioNomeIdade);
 
-        titulo("Ordenados por nome");
-        imprimirTabela4(ordenarPorNome(funcionarios));
+        imprimirTitulo("Ordenados por ordem alfabética");
+        List<Funcionario> funcionariosPorOrdemAlfabetica = ordenarPorNome(funcionarios);
+        imprimirTabelaQuatroColunas(funcionariosPorOrdemAlfabetica);
 
-        titulo("Total dos salários");
-        imprimirTabela2("Total", Formatadores.numero(totalSalarios(funcionarios)));
+        BigDecimal salarioTotal = getSalarioTotal(funcionarios);
+        String salarioTotalFormatado = Formatadores.numero(salarioTotal);
+        imprimirTitulo("Total dos salários");
+        imprimirTabelaDuasColunas(salarioTotalFormatado);
 
-        titulo("Equivalente em salários mínimos (R$ 1.212,00)");
-        imprimirMinimos(funcionarios);
+        imprimirTitulo("Equivalente em salários mínimos (R$ 1.212,00)");
+        imprimirQuantidadeSalariosMinimosPorFuncionario(funcionarios);
     }
 
     private static List<Funcionario> cargaInicial() {
         return List.of(
-                novo("Maria",  "18/10/2000", "2009.44", OPERADOR),
-                novo("João",   "12/05/1990", "2284.38", OPERADOR),
-                novo("Caio",   "02/05/1961", "9836.14", COORDENADOR),
-                novo("Miguel", "14/01/1988", "19119.88", DIRETOR),
-                novo("Alice",  "05/01/1995", "2234.68", RECEPCIONISTA),
-                novo("Heitor", "19/11/1999", "1582.72", OPERADOR),
-                novo("Arthur", "31/03/1993", "4071.84", CONTADOR),
-                novo("Laura",  "08/07/1994", "3017.45", GERENTE),
-                novo("Heloísa","24/05/2003", "1606.85", ELETRICISTA),
-                novo("Helena", "02/09/1996", "2799.93", GERENTE)
+                novo("Maria", "18/10/2000", "2009.44", Funcao.OPERADOR),
+                novo("João", "12/05/1990", "2284.38", Funcao.OPERADOR),
+                novo("Caio", "02/05/1961", "9836.14", Funcao.COORDENADOR),
+                novo("Miguel", "14/01/1988", "19119.88", Funcao.DIRETOR),
+                novo("Alice", "05/01/1995", "2234.68", Funcao.RECEPCIONISTA),
+                novo("Heitor", "19/11/1999", "1582.72", Funcao.OPERADOR),
+                novo("Arthur", "31/03/1993", "4071.84", Funcao.CONTADOR),
+                novo("Laura", "08/07/1994", "3017.45", Funcao.GERENTE),
+                novo("Heloísa", "24/05/2003", "1606.85", Funcao.ELETRICISTA),
+                novo("Helena", "02/09/1996", "2799.93", Funcao.GERENTE)
         );
     }
 
@@ -91,98 +106,144 @@ public final class Principal {
     }
 
     private static Map<Funcao, List<Funcionario>> agruparPorFuncao(List<Funcionario> funcionarios) {
-        return funcionarios.stream().collect(Collectors.groupingBy(
-                Funcionario::getFuncao,
-                () -> new EnumMap<>(Funcao.class),
-                Collectors.toList()
-        ));
+        return funcionarios
+                .stream()
+                .collect(Collectors.groupingBy(
+                        Funcionario::getFuncao,
+                        () -> new EnumMap<>(Funcao.class),
+                        Collectors.toList()
+                ));
     }
 
-    private static List<Funcionario> aniversariantes(List<Funcionario> funcionarios, int... meses) {
-        Set<Integer> set = Arrays.stream(meses).boxed().collect(Collectors.toSet());
-        return funcionarios.stream()
-                .filter(f -> set.contains(f.getDataNascimento().getMonthValue()))
+    private static List<Funcionario> getAniversariantesPorMeses(List<Funcionario> funcionarios, int... meses) {
+        Set<Integer> mesesParaFiltrar = Arrays.stream(meses)
+                .boxed()
+                .collect(Collectors.toSet());
+
+        return funcionarios
+                .stream()
+                .filter(f -> mesesParaFiltrar.contains(f.getDataNascimento().getMonthValue()))
                 .toList();
     }
 
-    private static Optional<Funcionario> maisVelho(List<Funcionario> funcionarios) {
-        return funcionarios.stream().min(Comparator.comparing(Funcionario::getDataNascimento));
+    private static Optional<Funcionario> getFuncionarioMaisVelho(List<Funcionario> funcionarios) {
+        return funcionarios
+                .stream()
+                .min(Comparator.comparing(Funcionario::getDataNascimento));
     }
 
     private static List<Funcionario> ordenarPorNome(List<Funcionario> funcionarios) {
-        return funcionarios.stream()
+        return funcionarios
+                .stream()
                 .sorted(Comparator.comparing(Funcionario::getNome, COLLATOR))
                 .toList();
     }
 
-    private static BigDecimal totalSalarios(List<Funcionario> funcionarios) {
-        return funcionarios.stream()
+    private static BigDecimal getSalarioTotal(List<Funcionario> funcionarios) {
+        return funcionarios
+                .stream()
                 .map(Funcionario::getSalario)
                 .reduce(BigDecimal.ZERO, BigDecimal::add)
                 .setScale(2, RM);
     }
 
-    private static void titulo(String t) {
+    private static void imprimirTitulo(String t) {
         System.out.println("\n— " + t + " —");
     }
 
-    private static String sep4() {
-        return "+" + "-".repeat(W_NOME+2) + "+" + "-".repeat(W_DATA+2) + "+"
-                + "-".repeat(W_SAL+2) + "+" + "-".repeat(W_FUNC+2) + "+";
+    private static String gerarSeparador() {
+        return "+" + "-".repeat(W_NOME + 2) + "+" + "-".repeat(W_DATA + 2) + "+"
+                + "-".repeat(W_SAL + 2) + "+" + "-".repeat(W_FUNC + 2) + "+";
     }
 
-    private static void imprimirTabela4(List<Funcionario> lista) {
+    private static void imprimirTabelaQuatroColunas(List<Funcionario> lista) {
         if (lista.isEmpty()) {
             System.out.println("(vazio)");
             return;
         }
-        String sep = sep4();
-        System.out.println(sep);
-        System.out.printf("| %-" + W_NOME + "s | %-" + W_DATA + "s | %-" + W_SAL + "s | %-" + W_FUNC + "s |%n",
-                "Nome", "Nascimento", "Salário", "Função");
-        System.out.println(sep);
-        for (Funcionario f : lista) {
-            System.out.printf("| %-" + W_NOME + "s | %-" + W_DATA + "s | %-" + W_SAL + "s | %-" + W_FUNC + "s |%n",
-                    f.getNome(),
-                    Formatadores.data(f.getDataNascimento()),
-                    Formatadores.numero(f.getSalario()),
-                    f.getFuncao().name());
+
+        String separador = gerarSeparador();
+        StringBuilder sb = new StringBuilder();
+
+        String linhaFormato = "| %-" + W_NOME + "s | %-" + W_DATA + "s | %-" + W_SAL + "s | %-" + W_FUNC + "s |%n";
+
+        sb.append(separador).append(System.lineSeparator());
+        sb.append(String.format(linhaFormato, "Nome", "Nascimento", "Salário", "Função"));
+        sb.append(separador).append(System.lineSeparator());
+
+        for (Funcionario funcionario : lista) {
+            sb.append(String.format(
+                    linhaFormato,
+                    funcionario.getNome(),
+                    Formatadores.data(funcionario.getDataNascimento()),
+                    Formatadores.numero(funcionario.getSalario()),
+                    funcionario.getFuncao().name()
+            ));
         }
-        System.out.println(sep);
+
+        sb.append(separador);
+
+        System.out.print(sb);
     }
+
 
     private static String sep2() {
-        return "+" + "-".repeat(W_K+2) + "+" + "-".repeat(W_V+2) + "+";
+        return "+" + "-".repeat(W_K + 2) + "+" + "-".repeat(W_V + 2) + "+";
     }
 
-    private static void imprimirTabela2(String chave, String valor) {
+    private static void imprimirFuncionarioNomeIdade(Funcionario funcionario) {
+        int wNome = W_NOME;
+        int wIdade = 8;
+
+        String sep = "+" + "-".repeat(wNome + 2) + "+" + "-".repeat(wIdade + 2) + "+";
+        String linhaFormato = "| %-" + wNome + "s | %-" + wIdade + "s |%n";
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(sep).append(System.lineSeparator());
+        sb.append(String.format(linhaFormato, "Nome", "Idade"));
+        sb.append(sep).append(System.lineSeparator());
+        sb.append(String.format(linhaFormato,
+                funcionario.getNome(),
+                funcionario.getIdadeEmAnos(LocalDate.now()) + " anos"));
+        sb.append(sep);
+
+        System.out.print(sb);
+    }
+
+    private static void imprimirTabelaDuasColunas(String valor) {
         String sep = sep2();
         System.out.println(sep);
         System.out.printf("| %-" + W_K + "s | %-" + W_V + "s |%n", "Descrição", "Valor");
         System.out.println(sep);
-        System.out.printf("| %-" + W_K + "s | %-" + W_V + "s |%n", chave, valor);
+        System.out.printf("| %-" + W_K + "s | %-" + W_V + "s |%n", "Total", valor);
         System.out.println(sep);
     }
 
-    private static void imprimirMinimos(List<Funcionario> funcionarios) {
+    private static void imprimirQuantidadeSalariosMinimosPorFuncionario(List<Funcionario> funcionarios) {
         String sep = sep2();
         System.out.println(sep);
         System.out.printf("| %-" + W_K + "s | %-" + W_V + "s |%n", "Nome", "Salários mínimos");
         System.out.println(sep);
-        for (Funcionario f : funcionarios) {
-            BigDecimal qtd = f.getSalario().divide(SAL_MIN, 2, RM);
-            System.out.printf("| %-" + W_K + "s | %-" + W_V + "s |%n",
-                    f.getNome(), Formatadores.numero(qtd));
+
+        for (Funcionario funcionario : funcionarios) {
+            BigDecimal quantidadeSalarios = funcionario.getSalario().divide(SAL_MIN, 2, RM);
+            String quantidadeSalariosFormatado = Formatadores.numero(quantidadeSalarios);
+            System.out.printf("| %-" + W_K + "s | %-" + W_V + "s |%n", funcionario.getNome(), quantidadeSalariosFormatado);
         }
+
         System.out.println(sep);
     }
 
     private static void imprimirAgrupado(Map<Funcao, List<Funcionario>> porFuncao) {
-        porFuncao.entrySet().stream()
+        porFuncao.entrySet()
+                .stream()
                 .sorted(Map.Entry.comparingByKey(Comparator.comparing(Enum::name)))
                 .forEach(e -> {
-                    System.out.println(e.getKey().name() + ":");
-                    imprimirTabela4(e.getValue());
+                    String funcao = e.getKey().name();
+                    List<Funcionario> funcionarios = e.getValue();
+
+                    System.out.println(funcao + ":");
+                    imprimirTabelaQuatroColunas(funcionarios);
                     System.out.println();
                 });
     }

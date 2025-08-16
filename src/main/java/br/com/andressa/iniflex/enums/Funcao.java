@@ -1,4 +1,4 @@
-package br.com.andressa.iniflex;
+package br.com.andressa.iniflex.enums;
 
 public enum Funcao {
     OPERADOR,

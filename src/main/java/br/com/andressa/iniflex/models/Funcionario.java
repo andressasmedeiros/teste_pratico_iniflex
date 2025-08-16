@@ -1,4 +1,7 @@
-package br.com.andressa.iniflex;
+package br.com.andressa.iniflex.models;
+
+import br.com.andressa.iniflex.enums.Funcao;
+import br.com.andressa.iniflex.utils.Formatadores;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -14,11 +17,16 @@ public final class Funcionario extends Pessoa {
     public Funcionario(String nome, LocalDate dataNascimento, BigDecimal salario, Funcao funcao) {
         super(nome, dataNascimento);
         this.salario = Objects.requireNonNull(salario).setScale(2, RM);
-        this.funcao  = Objects.requireNonNull(funcao);
+        this.funcao = Objects.requireNonNull(funcao);
     }
 
-    public BigDecimal getSalario() { return salario; }
-    public Funcao getFuncao() { return funcao; }
+    public BigDecimal getSalario() {
+        return salario;
+    }
+
+    public Funcao getFuncao() {
+        return funcao;
+    }
 
     public void setSalario(BigDecimal novo) {
         this.salario = Objects.requireNonNull(novo).setScale(2, RM);
