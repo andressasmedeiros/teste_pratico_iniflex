@@ -39,16 +39,16 @@ valores).
 ## Tecnologias e Bibliotecas
 
 - **Java 21**
-- **Maven** - gerenciamento de dependências e execução de testes
-- **JUnit 5 (Jupiter)** - testes unitários
-- **Collections API** - manipulação de listas e mapas
-- **Streams API** - filtragem, agrupamento e ordenação
-- **Enum** - para definição de funções (`Funcao`)
-- **EnumMap** - para agrupamento por função com mais performance
-- **Collator** - ordenação correta no português
-- **BigDecimal** - cálculos monetários com precisão
-- **DateTimeFormatter** - formatação de datas
-- **RoundingMode.HALF_UP** - arredondamento financeiro
+- **Maven**: gerenciamento de dependências e execução de testes
+- **JUnit 5 (Jupiter)**: testes unitários
+- **Collections API**: manipulação de listas e mapas
+- **Streams API**: filtragem, agrupamento e ordenação
+- **Enum**: para definição de funções (`Funcao`)
+- **EnumMap**: para agrupamento por função com mais performance
+- **Collator**: ordenação correta no português
+- **BigDecimal**: cálculos monetários com precisão
+- **DateTimeFormatter**: formatação de datas
+- **RoundingMode.HALF_UP**: arredondamento financeiro
 
 ---
 
@@ -155,5 +155,118 @@ Para melhor legibilidade, o console mostra:
 - Dados alinhados por colunas
 - Separadores superiores e inferiores
 
+---
+## Resultados obtidos
+
+```bash
+
+— Funcionários —
++------------------+--------------+----------------+----------------+
+| Nome             | Nascimento   | Salário        | Função         |
++------------------+--------------+----------------+----------------+
+| Maria            | 18/10/2000   | 2.009,44       | OPERADOR       |
+| Caio             | 02/05/1961   | 9.836,14       | COORDENADOR    |
+| Miguel           | 14/01/1988   | 19.119,88      | DIRETOR        |
+| Alice            | 05/01/1995   | 2.234,68       | RECEPCIONISTA  |
+| Heitor           | 19/11/1999   | 1.582,72       | OPERADOR       |
+| Arthur           | 31/03/1993   | 4.071,84       | CONTADOR       |
+| Laura            | 08/07/1994   | 3.017,45       | GERENTE        |
+| Heloísa          | 24/05/2003   | 1.606,85       | ELETRICISTA    |
+| Helena           | 02/09/1996   | 2.799,93       | GERENTE        |
++------------------+--------------+----------------+----------------+
+— Agrupados por função —
+CONTADOR:
++------------------+--------------+----------------+----------------+
+| Nome             | Nascimento   | Salário        | Função         |
++------------------+--------------+----------------+----------------+
+| Arthur           | 31/03/1993   | 4.479,02       | CONTADOR       |
++------------------+--------------+----------------+----------------+
+COORDENADOR:
++------------------+--------------+----------------+----------------+
+| Nome             | Nascimento   | Salário        | Função         |
++------------------+--------------+----------------+----------------+
+| Caio             | 02/05/1961   | 10.819,75      | COORDENADOR    |
++------------------+--------------+----------------+----------------+
+DIRETOR:
++------------------+--------------+----------------+----------------+
+| Nome             | Nascimento   | Salário        | Função         |
++------------------+--------------+----------------+----------------+
+| Miguel           | 14/01/1988   | 21.031,87      | DIRETOR        |
++------------------+--------------+----------------+----------------+
+ELETRICISTA:
++------------------+--------------+----------------+----------------+
+| Nome             | Nascimento   | Salário        | Função         |
++------------------+--------------+----------------+----------------+
+| Heloísa          | 24/05/2003   | 1.767,54       | ELETRICISTA    |
++------------------+--------------+----------------+----------------+
+GERENTE:
++------------------+--------------+----------------+----------------+
+| Nome             | Nascimento   | Salário        | Função         |
++------------------+--------------+----------------+----------------+
+| Laura            | 08/07/1994   | 3.319,20       | GERENTE        |
+| Helena           | 02/09/1996   | 3.079,92       | GERENTE        |
++------------------+--------------+----------------+----------------+
+OPERADOR:
++------------------+--------------+----------------+----------------+
+| Nome             | Nascimento   | Salário        | Função         |
++------------------+--------------+----------------+----------------+
+| Maria            | 18/10/2000   | 2.210,38       | OPERADOR       |
+| Heitor           | 19/11/1999   | 1.740,99       | OPERADOR       |
++------------------+--------------+----------------+----------------+
+RECEPCIONISTA:
++------------------+--------------+----------------+----------------+
+| Nome             | Nascimento   | Salário        | Função         |
++------------------+--------------+----------------+----------------+
+| Alice            | 05/01/1995   | 2.458,15       | RECEPCIONISTA  |
++------------------+--------------+----------------+----------------+
+
+— Aniversariantes (Outubro e Dezembro) —
++------------------+--------------+----------------+----------------+
+| Nome             | Nascimento   | Salário        | Função         |
++------------------+--------------+----------------+----------------+
+| Maria            | 18/10/2000   | 2.210,38       | OPERADOR       |
++------------------+--------------+----------------+----------------+
+— Mais velho —
++------------------+----------+
+| Nome             | Idade    |
++------------------+----------+
+| Caio             | 64 anos  |
++------------------+----------+
+— Ordenados por ordem alfabética —
++------------------+--------------+----------------+----------------+
+| Nome             | Nascimento   | Salário        | Função         |
++------------------+--------------+----------------+----------------+
+| Alice            | 05/01/1995   | 2.458,15       | RECEPCIONISTA  |
+| Arthur           | 31/03/1993   | 4.479,02       | CONTADOR       |
+| Caio             | 02/05/1961   | 10.819,75      | COORDENADOR    |
+| Heitor           | 19/11/1999   | 1.740,99       | OPERADOR       |
+| Helena           | 02/09/1996   | 3.079,92       | GERENTE        |
+| Heloísa          | 24/05/2003   | 1.767,54       | ELETRICISTA    |
+| Laura            | 08/07/1994   | 3.319,20       | GERENTE        |
+| Maria            | 18/10/2000   | 2.210,38       | OPERADOR       |
+| Miguel           | 14/01/1988   | 21.031,87      | DIRETOR        |
++------------------+--------------+----------------+----------------+
+— Total dos salários —
++------------------+----------------------+
+| Descrição        | Valor                |
++------------------+----------------------+
+| Total            | 50.906,82            |
++------------------+----------------------+
+
+— Equivalente em salários mínimos (R$ 1.212,00) —
++------------------+----------------------+
+| Nome             | Salários mínimos     |
++------------------+----------------------+
+| Maria            | 1,82                 |
+| Caio             | 8,93                 |
+| Miguel           | 17,35                |
+| Alice            | 2,03                 |
+| Heitor           | 1,44                 |
+| Arthur           | 3,70                 |
+| Laura            | 2,74                 |
+| Heloísa          | 1,46                 |
+| Helena           | 2,54                 |
++------------------+----------------------+
+```
 ---
 > Projeto realizado para processo seletivo de Desenvolvedor Junior da empresa Projedata
