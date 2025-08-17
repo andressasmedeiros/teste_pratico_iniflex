@@ -11,6 +11,7 @@ incluindo:
 - Identificação do funcionário mais velho
 - Ordenação alfabética
 - Cálculo de totais e salários mínimos equivalentes
+- Resultados formatados com ASCII
 
 Este projeto segue os requisitos definidos pela Iniflex, com saída formatada em console no padrão brasileiro (datas e
 valores).
