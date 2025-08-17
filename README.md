@@ -156,6 +156,18 @@ Para melhor legibilidade, o console mostra:
 - Dados alinhados por colunas
 - Separadores superiores e inferiores
 
+### Classes seladas (`sealed`)
+Pessoa é `abstract sealed` e controla quem pode estendê-la (ex.: `Funcionario`).
+Benefícios:
+- Hierarquia controlada e mais segura (apenas tipos permitidos podem herdar)
+- Exaustividade em switch/pattern matching (sem default “cego”)
+- Facilita a evolução da hierarquia sem quebrar invariantes
+- Pré-requisito: Java 17+.
+> Se o sistema futuramente viesse a crescer e surgir outro subtipo (ex.: `Estagiario`), basta incluí-lo em `permits`. Se quiser permitir herança livre a partir de um subtipo específico, use `non-sealed` nesse subtipo.
+
+### Testes com JUnit 5
+Cobrem regras de negócio principais (reajuste, idade, agrupamentos, ordenação com acentos, somatório de salários) com testes determinísticos e parametrizados.
+
 ---
 ## Resultados obtidos
 

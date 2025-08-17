@@ -17,17 +17,17 @@ public final class Formatadores {
     private static final DecimalFormat DF;
 
     static {
-        var s = new DecimalFormatSymbols(PT_BR);
-        s.setDecimalSeparator(',');
-        s.setGroupingSeparator('.');
-        DF = new DecimalFormat("#,##0.00", s);
+        var decimalFormatSymbols = new DecimalFormatSymbols(PT_BR);
+        decimalFormatSymbols.setDecimalSeparator(',');
+        decimalFormatSymbols.setGroupingSeparator('.');
+        DF = new DecimalFormat("#,##0.00", decimalFormatSymbols);
     }
 
-    public static String data(LocalDate d) {
-        return d.format(DTF);
+    public static String data(LocalDate date) {
+        return date.format(DTF);
     }
 
-    public static String numero(BigDecimal n) {
-        return DF.format(n);
+    public static String numero(BigDecimal decimal) {
+        return DF.format(decimal);
     }
 }

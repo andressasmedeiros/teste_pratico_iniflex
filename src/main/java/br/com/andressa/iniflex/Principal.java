@@ -98,11 +98,11 @@ public final class Principal {
     }
 
     private static void removerPorNome(List<Funcionario> funcionarios, String nome) {
-        funcionarios.removeIf(f -> f.getNome().equalsIgnoreCase(nome));
+        funcionarios.removeIf(funcionario -> funcionario.getNome().equalsIgnoreCase(nome));
     }
 
     private static void aplicarReajuste(List<Funcionario> funcionarios, BigDecimal percentual) {
-        funcionarios.forEach(f -> f.aplicarReajustePercentual(percentual));
+        funcionarios.forEach(funcionario -> funcionario.aplicarReajustePercentual(percentual));
     }
 
     private static Map<Funcao, List<Funcionario>> agruparPorFuncao(List<Funcionario> funcionarios) {
@@ -122,7 +122,7 @@ public final class Principal {
 
         return funcionarios
                 .stream()
-                .filter(f -> mesesParaFiltrar.contains(f.getDataNascimento().getMonthValue()))
+                .filter(funcionario -> mesesParaFiltrar.contains(funcionario.getDataNascimento().getMonthValue()))
                 .toList();
     }
 
